@@ -6,6 +6,9 @@ export default function objToResponse(obj) {
   const payloadLength = lengthByteCount === 0 ? stringBytes : 126;
   const buffer = Buffer.alloc(2 + lengthByteCount + stringBytes);
 
+  //0b000 this is a binary value
+  //Socket.io does this binary encoding for us
+
   buffer.writeUInt8(0b10000001, 0);
   buffer.writeUInt8(payloadLength, 1);
 
