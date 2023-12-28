@@ -1,15 +1,27 @@
-// a global called "io" is being loaded separately
+// a global called "io" is being loaded separately from index.html CDN call
 
 const chat = document.getElementById("chat");
 const msgs = document.getElementById("msgs");
 const presence = document.getElementById("presence-indicator");
 let allChat = [];
 
-/*
- *
- * Code goes here
- *
- */
+// window.WebSocket = null; //If no webSocket ability socket.io switches to polling
+const socket = io("http://localhost:8080");
+
+socket.on("connect", () => {
+  console.log("connected");
+  presence.innerText = '🟢';
+});
+
+socket.on("disconnect", () => {
+  presence.innerText = '🛑';
+});
+
+socket.on("msg:get", (data) => {
+  allChat = data.msg;
+  render();
+});
+
 
 chat.addEventListener("submit", function (e) {
   e.preventDefault();
@@ -18,11 +30,12 @@ chat.addEventListener("submit", function (e) {
 });
 
 async function postNewMsg(user, text) {
-  /*
-   *
-   * Code goes here
-   *
-   */
+  const data = {
+    user,
+    text
+  }
+
+  socket.emit("msg:post", data);
 }
 
 function render() {
